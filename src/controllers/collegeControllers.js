@@ -36,29 +36,30 @@ const collegeDetails = async (req,res)=>{
         const data = req.query
         const {collegeName} = data
         
-        const findBlog = await collegModel.findOne({name :collegeName})
+        const findcollege = await collegModel.findOne({name :collegeName})
 
-        if(!findBlog){
+        if(!findcollege){
             return res.status(400).send({status : false, msg : "no college with this name exists"})
         }
 
-        if(findBlog.isDeleted === true){
+        if(findcollege.isDeleted === true){
             return res.status(404).send({status : false, msg : "This college is no longer with us"})
         }
 
-        const candidates = await internModel.find({collegeId : findBlog._id})
+        const candidates = await internModel.find({collegeId : findcollege._id})
 
         if(!candidates){
             return res.status(400).send({status : false, msg : "no candiates from this college has yet applied"})
         }
 
-        const finalData = await findBlog.UpdateOne({$set :{interests : candidates}}, {new : true, upsert : true})
+        const finalData = await collegModel.findOneAndUpdate({name : collegeName},{$set :{interests : candidates}}, {new : true, upsert: true})
         
         if(finalData){
-            return res.status(200).send({status : false, msg : "here's what we found on your query", data : finalData})
+            return res.status(200).send({status : true, msg : "here's what we found on your query", data : finalData})
         }
     }
     catch (err){
+        console.log(err)
         return res.status(500).send({status : false, err : err.message})
     }
 }
