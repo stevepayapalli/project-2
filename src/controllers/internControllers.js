@@ -8,7 +8,17 @@ const createIntern = async (req,res)=>{
     try{
         const data = req.body
         const { name, mobile, email, collegeName} = data
+
+        if(!email){
+            return res.status(400).send({status : false, msg : "email is a required field"})
+        }
         
+        const verifyemail = validator.validate(email)
+
+        if(!verifyemail){
+            return res.status(400).send({status : false, msg : "this is not a valid email"})
+        }
+
         const findcollege = await collegeModel.findOne({name : collegeName})
         const collegeId = findcollege._id
 
