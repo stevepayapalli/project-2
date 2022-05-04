@@ -1,0 +1,25 @@
+{
+  "name": "project-2-open-to-intern",
+  "version": "1.0.0",
+  "description": "## Open to Intern Project Requirement",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itstheanurag/project-2-open-to-intern.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itstheanurag/project-2-open-to-intern/issues"
+  },
+  "homepage": "https://github.com/itstheanurag/project-2-open-to-intern#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "mongoose": "^6.3.2",
+    "nodemon": "^2.0.16"
+  }
+}
