@@ -1,4 +1,4 @@
-{const collegModel = require("../models/collegeModel")
+const collegModel = require("../models/collegeModel")
 const internModel = require("../models/internModel")
 
 const createCollege = async (req,res)=>{
@@ -32,38 +32,39 @@ const createCollege = async (req,res)=>{
 }
 
 const collegeDetails = async (req,res)=>{
-    try{
-        const data = req.query
-        const {collegeName} = data
-        
-        const findcollege = await collegModel.findOne({name :collegeName})
+    try {
+        let data = req.query
+        let {collegeName} = data
+
+        let findcollege = await collegModel.findOne({name : collegeName, isDeleted : false}).select({_id : 1, name : 1, logoLink: 1, fullName: 1})
 
         if(!findcollege){
-            return res.status(400).send({status : false, msg : "no college with this name exists"})
+            return res.status(400).send({ status: false, msg: "college with this name exists" })
         }
 
-        if(findcollege.isDeleted === true){
-            return res.status(404).send({status : false, msg : "This college is no longer with us"})
-        }
+        let collegeId = findcollege._id
 
-        const candidates = await internModel.find({collegeId : findcollege._id})
-
-        if(!candidates){
-            return res.status(400).send({status : false, msg : "no candiates from this college has yet applied"})
-        }
-
-        const finalData = await collegModel.findOneAndUpdate({name : collegeName},{$set :{interests : candidates}}, {new : true, upsert: true})
+        let candidates = await internModel.find({collegeId : collegeId, isDeleted : false}).select({name : 1, email : 1, mobile : 1})
         
-        if(finalData){
-            return res.status(200).send({status : true, msg : "here's what we found on your query", data : finalData})
+        if(!candidates){
+            return res.status(400).send({ status: false, msg: "no candidates have applied from this college" })
         }
-    }
-    catch (err){
-        console.log(err)
-        return res.status(500).send({status : false, err : err.message})
+
+        let details = {
+            name : findcollege.name,
+            fullName : findcollege.fullName,
+            logoLink : findcollege.logoLink,
+            intrests : candidates
+        }
+
+        return res.status(400).send({ status: true, data: details })
+
+    } catch (error) {
+        
+        return res.status(500).send({ status: false, msg: error.message })
     }
 }
 
 
 
-module.exports = {createCollege, collegeDetails}}
+module.exports = {createCollege, collegeDetails}

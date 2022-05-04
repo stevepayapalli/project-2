@@ -13,7 +13,6 @@ const internSchema = new mongoose.Schema({
     },
     mobile : {
        type : Number,
-       match:  /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/,
        required : true,
        unique : true
     },
