@@ -1,5 +1,5 @@
 const mongoose = require ("mongoose")
-const objectid = mongoose.Schema.Types.ObjectId
+const objectId = mongoose.Schema.Types.ObjectId
 
 const internModel = new mongoose.Schema({
     name : {
@@ -17,10 +17,12 @@ const internModel = new mongoose.Schema({
        unique : true
     },
     collegeId : {
-        type : objectid,
+        type : objectId,
         ref : "College",
         required : true,
     },
-
-
+    isDeleted : {
+        type : Boolean,
+        default : false
+    }
 })
