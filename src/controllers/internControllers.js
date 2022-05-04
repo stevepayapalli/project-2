@@ -34,8 +34,6 @@ const createIntern = async (req,res)=>{
             return res.status(400).send({status : false, msg : "no college with this name exists"})
         }
 
-
-
         if(findcollege._id == objectId){
             const createIntern = await internModel.create(data)
             return res.status(201).send({status : false, msg : "You have successfully registered", data : createIntern})
