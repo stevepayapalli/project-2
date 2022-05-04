@@ -1,4 +1,5 @@
-const collegModel = require("../models/collegeModel")
+{const collegModel = require("../models/collegeModel")
+const internModel = require("../models/internModel")
 
 const createCollege = async (req,res)=>{
     try{
@@ -15,7 +16,7 @@ const createCollege = async (req,res)=>{
         }
 
         if(!logoLink){
-            return res.status(400).send({status : false, msg : "logLink is a required field"})
+            return res.status(400).send({status : false, msg : "logoLink is a required field"})
         }
 
         if (!await collegModel.exists({name : data.name})){
@@ -30,8 +31,38 @@ const createCollege = async (req,res)=>{
     }
 }
 
+const collegeDetails = async (req,res)=>{
+    try{
+        const data = req.query
+        const {collegeName} = data
+        
+        const findBlog = await collegModel.findOne({name :collegeName})
+
+        if(!findBlog){
+            return res.status(400).send({status : false, msg : "no college with this name exists"})
+        }
+
+        if(findBlog.isDeleted === true){
+            return res.status(404).send({status : false, msg : "This college is no longer with us"})
+        }
+
+        const candidates = await internModel.find({collegeId : findBlog._id})
+
+        if(!candidates){
+            return res.status(400).send({status : false, msg : "no candiates from this college has yet applied"})
+        }
+
+        const finalData = await findBlog.UpdateOne({$set :{interests : candidates}}, {new : true, upsert : true})
+        
+        if(finalData){
+            return res.status(200).send({status : false, msg : "here's what we found on your query", data : finalData})
+        }
+    }
+    catch (err){
+        return res.status(500).send({status : false, err : err.message})
+    }
+}
 
 
 
-
-module.exports = {createCollege}
+module.exports = {createCollege, collegeDetails}}
