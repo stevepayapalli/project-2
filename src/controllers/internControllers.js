@@ -12,11 +12,16 @@ const createIntern = async (req,res)=>{
         if(!email){
             return res.status(400).send({status : false, msg : "email is a required field"})
         }
-        
-        const verifyemail = validator.validate(email)
 
-        if(!verifyemail){
-            return res.status(400).send({status : false, msg : "this is not a valid email"})
+        const emailPattern = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+        const mobilePattern =  /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
+
+        if(!email.match(emailPattern)){
+            return res.status(400).send({status : false, msg : "This is not a valid email"})
+        }        
+
+        if(!mobile.match(mobilePattern)){
+            return res.status(400).send({status : false, msg : "This is not a valid mobile number"})
         }
 
         const findcollege = await collegeModel.findOne({name : collegeName})

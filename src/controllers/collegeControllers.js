@@ -57,7 +57,7 @@ const collegeDetails = async (req,res)=>{
             intrests : candidates
         }
 
-        return res.status(400).send({ status: true, data: details })
+        return res.status(200).send({ status: true, data: details })
 
     } catch (error) {
         
