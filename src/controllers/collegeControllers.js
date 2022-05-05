@@ -47,7 +47,17 @@ const collegeDetails = async (req,res)=>{
     try {
         let data = req.query
         let {collegeName} = data
+         
+        if(!collegeName){
+             return res.status(400).send({status : false, msg : "College Name is required to perform this action"})
+         }
 
+        let namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/gi
+        
+        if(!collegeName.match(namePattern)){
+             return res.status(400).send({status : false, msg : "This is not a valid college Name"})
+        }
+        
         let findcollege = await collegModel.findOne({name : collegeName, isDeleted : false}).select({_id : 1, name : 1, logoLink: 1, fullName: 1})
 
         if(!findcollege){
