@@ -2,6 +2,7 @@ const internModel = require("../models/internModel.js")
 const mongoose = require("mongoose")
 const collegeModel = require("../models/collegeModel.js")
 const validator = require ("email-validator")
+const {phone} = require('phone');
 
 
 const createIntern = async (req,res)=>{
@@ -12,18 +13,27 @@ const createIntern = async (req,res)=>{
         if(!email){
             return res.status(400).send({status : false, msg : "email is a required field"})
         }
-
-        const emailPattern = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
-        const mobilePattern =  /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
-
+/*
+        const emailPattern = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})/
         if(!email.match(emailPattern)){
             return res.status(400).send({status : false, msg : "This is not a valid email"})
-        }        
-
-        if(!mobile.match(mobilePattern)){
-            return res.status(400).send({status : false, msg : "This is not a valid mobile number"})
+        }        //emial validations with regex
+*/
+        const validEmail = validator.validate(email)
+        if(!validEmail){
+            return res.status(400).send({status : false, msg : "this email is not valid"})
         }
 
+        if(!mobile){
+            return res.status(400).send({status : false, msg : "Mobile is a required field and can not be empty"})
+        }
+
+        const mobiles = mobile.trim()
+        
+        if(mobiles !== true){
+            return res.status(400).send({status : false, msg : "This is not a valid mobile number"})
+        }
+            
         const findcollege = await collegeModel.findOne({name : collegeName})
         const collegeId = findcollege._id
 
