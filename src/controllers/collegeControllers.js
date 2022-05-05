@@ -11,8 +11,20 @@ const createCollege = async (req,res)=>{
             return res.status(400).send({status : false, msg : "name is a required field"})
         }
 
+        let namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/gi
+        
+        if(!name.match(namePattern)){
+            return res.status(400).send({status : false, msg : "This is not a valid Name"})
+        }
+
         if(!fullName){
             return res.status(400).send({status : false, msg : "fullName is a required field"})
+        }
+
+        let fullNamePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){3,150}$/gi
+        
+        if(!fullName.match(fullNamePattern)){
+            return res.status(400).send({status : false, msg : "This is not a valid full Name"})
         }
 
         if(!logoLink){
@@ -39,15 +51,15 @@ const collegeDetails = async (req,res)=>{
         let findcollege = await collegModel.findOne({name : collegeName, isDeleted : false}).select({_id : 1, name : 1, logoLink: 1, fullName: 1})
 
         if(!findcollege){
-            return res.status(400).send({ status: false, msg: "college with this name exists" })
+            return res.status(400).send({ status: false, msg: "No college with this name exists" })
         }
 
         let collegeId = findcollege._id
 
         let candidates = await internModel.find({collegeId : collegeId, isDeleted : false}).select({name : 1, email : 1, mobile : 1})
         
-        if(!candidates){
-            return res.status(400).send({ status: false, msg: "no candidates have applied from this college" })
+        if(!candidates.length){
+            return res.status(400).send({ status: false, msg: "no students from this college has applied yet" })
         }
 
         let details = {

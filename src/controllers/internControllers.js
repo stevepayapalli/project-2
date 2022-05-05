@@ -2,7 +2,6 @@ const internModel = require("../models/internModel.js")
 const mongoose = require("mongoose")
 const collegeModel = require("../models/collegeModel.js")
 const validator = require ("email-validator")
-const {phone} = require('phone');
 
 
 const createIntern = async (req,res)=>{
@@ -12,6 +11,16 @@ const createIntern = async (req,res)=>{
 
         if(!email){
             return res.status(400).send({status : false, msg : "email is a required field"})
+        }
+
+        if(!name){
+            return res.status(400).send({status : false, msg : "name is required field"})
+        }
+
+        let namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){3,24}$/gi
+        
+        if(!name.match(namePattern)){
+            return res.status(400).send({status : false, msg : "This is not a valid Name"})
         }
 /*
         const emailPattern = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})/
@@ -27,14 +36,26 @@ const createIntern = async (req,res)=>{
         if(!mobile){
             return res.status(400).send({status : false, msg : "Mobile is a required field and can not be empty"})
         }
+        const mobiles = mobile.replace(/\s+/g, '')
 
-        const mobiles = mobile.trim()
+        const mobilePattern = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/g
+        if(!mobiles.match(mobilePattern)){
+            return res.status(400).send({status : false, msg : "This is not a valid Mobile Number"})
+        } 
         
-        if(mobiles !== true){
-            return res.status(400).send({status : false, msg : "This is not a valid mobile number"})
+        if(!collegeName){
+            return res.status(400).send({status : false, msg : "college name is a required field"})
         }
             
         const findcollege = await collegeModel.findOne({name : collegeName})
+        if(!findcollege){
+            return res.status(400).send({status : false, msg : "no college with this name exists"})
+        }
+
+        if(findcollege.isDeleted === true){
+            return res.status(400).send({status : false, msg : "This college is no longer with us"})
+        }
+
         const collegeId = findcollege._id
 
         const internData = {
@@ -50,7 +71,6 @@ const createIntern = async (req,res)=>{
             return res.status(400).send({status : false, msg : "student intern already exists"})
         }
         
-
         const createIntern = await internModel.create(internData)
 
         if(createIntern){
