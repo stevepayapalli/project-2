@@ -33,6 +33,11 @@ const createIntern = async (req,res)=>{
             return res.status(400).send({status : false, msg : "this email is not valid"})
         }
 
+        let findEmail = await internModel.findOne({email : email})
+        if(findEmail){
+            return res.status(400).send({status : false, msg : "a user with this email already exist"})
+        }
+        
         if(!mobile){
             return res.status(400).send({status : false, msg : "Mobile is a required field and can not be empty"})
         }
@@ -42,6 +47,11 @@ const createIntern = async (req,res)=>{
         if(!mobiles.match(mobilePattern)){
             return res.status(400).send({status : false, msg : "This is not a valid Mobile Number"})
         } 
+
+        let findMobile = await internModel.findOne({mobile : mobiles})
+        if(findMobile){
+            return res.status(400).send({status : false, msg : "a user with this mobile already exist"})
+        }
         
         if(!collegeName){
             return res.status(400).send({status : false, msg : "college name is a required field"})
@@ -60,7 +70,7 @@ const createIntern = async (req,res)=>{
 
         const internData = {
             name, 
-            mobile,
+            mobiles,
             email,
             collegeId
         }
