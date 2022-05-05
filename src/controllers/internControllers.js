@@ -1,7 +1,7 @@
 const internModel = require("../models/internModel.js")
-const mongoose = require("mongoose")
 const collegeModel = require("../models/collegeModel.js")
 const validator = require ("email-validator")
+
 
 
 const createIntern = async (req,res)=>{
@@ -48,7 +48,7 @@ const createIntern = async (req,res)=>{
             return res.status(400).send({status : false, msg : "This is not a valid Mobile Number"})
         } 
 
-        let findMobile = await internModel.findOne({mobile : mobiles})
+        let findMobile = await internModel.findOne({mobile : mobile})
         if(findMobile){
             return res.status(400).send({status : false, msg : "a user with this mobile already exist"})
         }
@@ -70,7 +70,7 @@ const createIntern = async (req,res)=>{
 
         const internData = {
             name, 
-            mobiles,
+            mobile,
             email,
             collegeId
         }

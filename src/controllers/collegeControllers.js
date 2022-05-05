@@ -1,5 +1,6 @@
 const collegModel = require("../models/collegeModel")
 const internModel = require("../models/internModel")
+const url = require("valid-url")
 
 const createCollege = async (req,res)=>{
     try{
@@ -11,7 +12,7 @@ const createCollege = async (req,res)=>{
             return res.status(400).send({status : false, msg : "name is a required field"})
         }
 
-        let namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/gi
+        const namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/g
         
         if(!name.match(namePattern)){
             return res.status(400).send({status : false, msg : "This is not a valid Name"})
@@ -21,7 +22,7 @@ const createCollege = async (req,res)=>{
             return res.status(400).send({status : false, msg : "fullName is a required field"})
         }
 
-        let fullNamePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){3,150}$/gi
+        const fullNamePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){3,150}$/gi
         
         if(!fullName.match(fullNamePattern)){
             return res.status(400).send({status : false, msg : "This is not a valid full Name"})
@@ -29,6 +30,12 @@ const createCollege = async (req,res)=>{
 
         if(!logoLink){
             return res.status(400).send({status : false, msg : "logoLink is a required field"})
+        }
+
+        const validateLogoLink = url.isUri(logoLink)
+
+        if(!validateLogoLink){
+        return res.status(400).send({status : false, msg : "This is not a valid logoLink"})
         }
 
         if (!await collegModel.exists({name : data.name})){
@@ -43,6 +50,13 @@ const createCollege = async (req,res)=>{
     }
 }
 
+
+
+
+
+
+
+
 const collegeDetails = async (req,res)=>{
     try {
         let data = req.query
@@ -52,7 +66,7 @@ const collegeDetails = async (req,res)=>{
              return res.status(400).send({status : false, msg : "College Name is required to perform this action"})
          }
 
-        let namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/gi
+        let namePattern = /^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/g
         
         if(!collegeName.match(namePattern)){
              return res.status(400).send({status : false, msg : "This is not a valid college Name"})
